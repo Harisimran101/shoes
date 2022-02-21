@@ -26,11 +26,11 @@ console.log(width,height)
             renderer.setPixelRatio(window.devicePixelRatio);
             renderer.outputEncoding = THREE.sRGBEncoding;
             renderer.toneMapping = THREE.ACESFilmicToneMapping;
-            renderer.toneMappingExposure = 1.5;
+            renderer.toneMappingExposure = 1.2;
             
 
-            const light = new THREE.HemisphereLight( 'white', 'white', 1.2);
-            scene.add( light );
+            // const light = new THREE.HemisphereLight( 'white', 'white', 1.2);
+            // scene.add( light );
 
             // const pmremGenerator = new THREE.PMREMGenerator( renderer );
             // scene.background = new THREE.Color( 0xeeeeee );
@@ -60,14 +60,13 @@ new RGBELoader().load( 'Studio.hdr', function ( texture ) {
 });
 
 
-			camera.position.set(0,3,3);
+			camera.position.set(0,3,6);
 
 
 
             const renderScene = new RenderPass( scene, camera );
 
-                const antialiaspass = new SMAAPass( window.innerWidth * renderer.getPixelRatio(), window.innerHeight * renderer.getPixelRatio() );
- 
+           
 
                 // const bokehPass = new BokehPass( scene, camera, {
 				// 	focus: 0.8,
@@ -80,7 +79,7 @@ new RGBELoader().load( 'Studio.hdr', function ( texture ) {
 
 				const composer = new EffectComposer( renderer );
 				composer.addPass( renderScene );
-                composer.addPass(antialiaspass);
+             
               //  composer.addPass(bokehPass)
 
 
@@ -93,12 +92,35 @@ new RGBELoader().load( 'Studio.hdr', function ( texture ) {
                
           anime({
             targets: shoes.rotation,
-            y: [shoes.rotation.y, Math.PI],
-            delay: 1200,
-            duration: 2000,
-            easing: 'easeInOutQuart'
+           z: [shoes.rotation.z, shoes.rotation.z + 0.4 ],
+       
+            duration: 1200,
+            loop: true,
+            direction: 'alternate',
+            easing: 'easeInOutExpo',
+       });
+
+       anime({
+            targets: shoes.position,
+            y: [shoes.position.y, shoes.position.y + 0.8],
+            delay: 310,
+            duration: 900,
+            loop: true,
+            easing: 'easeInOutExpo',
+            direction: 'alternate',
        })
-            
+
+    
+       anime({
+            targets: shoes.position,
+            z: [shoes.position.z, '2'],
+            delay: 300,
+            duration: 900,
+            loop: true,
+            easing: 'easeInOutExpo',
+            direction: 'alternate',
+       })
+    
             },
             function ( xhr ) {
 
@@ -115,7 +137,8 @@ new RGBELoader().load( 'Studio.hdr', function ( texture ) {
                 const deltatime = elapse - oldtime;
                 oldtime = deltatime;
 
-               
+              
+                    
                controls.update();      
           
 			composer.render();
