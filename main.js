@@ -23,31 +23,76 @@ console.log(width,height)
 
 			const renderer = new THREE.WebGLRenderer({antialias: true,alpha: true,canvas: webgl});
 			renderer.setSize( width, height);
-            renderer.setPixelRatio(window.devicePixelRatio);
+            renderer.setPixelRatio(window.devicePixelRatio / 1.2);
             renderer.outputEncoding = THREE.sRGBEncoding;
             renderer.toneMapping = THREE.ACESFilmicToneMapping;
             renderer.toneMappingExposure = 1.2;
-            
+     
 
-            // const light = new THREE.HemisphereLight( 'white', 'white', 1.2);
-            // scene.add( light );
+            const directionalLight = new THREE.DirectionalLight( 0xffffff, 0.5 );
+            scene.add( directionalLight );
 
             // const pmremGenerator = new THREE.PMREMGenerator( renderer );
             // scene.background = new THREE.Color( 0xeeeeee );
 			// scene.environment = pmremGenerator.fromScene( new RoomEnvironment() ).texture;
 			// scene.fog = new THREE.Fog( 0xeeeeee, 10, 50 );
 
-
+            const linematerial = new THREE.LineBasicMaterial( {
+                color: 0xffffff,
+                linewidth: 0.01,
+                linecap: 'round', //ignored by WebGLRenderer
+                linejoin:  'round', //ignored by WebGLRenderer
+                transparent: true
+            } );
             const controls = new OrbitControls( camera, renderer.domElement );
             controls.enableDamping = true;
             controls.dampingFactor = 0.08;
             controls.maxDistance = 20;
-            controls.enablePan = false;
+
+            const geometry = new THREE.SphereGeometry(1.5,40,40);
+            const material = new THREE.MeshPhysicalMaterial({
+                 color: 'blue',
+                 roughness: 0.1,
+                 metalness:0.8,
+                 clearcoat: 0.4,
+                sheen: 1,
+            })
+
+            const sphere = new THREE.Mesh(geometry,material);
+            scene.add(sphere);
 
 
+
+
+            [[
+
+
+            ]]
+            
+
+
+
+            
             const gui = new dat.GUI();
+          
+            
+           let video = document.getElementById( 'video' );
+				video.play();
+				video.addEventListener( 'play', function () {
 
-    
+					this.currentTime = 3;
+
+				} );
+
+				const texture = new THREE.VideoTexture( video );
+          
+
+ const videomaterial = new THREE.MeshStandardMaterial({
+      map: texture,
+      roughness: 0.85,
+      metalness: 0.1,
+ 
+ })               
      
 const pmremGenerator = new THREE.PMREMGenerator( renderer );
 new RGBELoader().load( 'Studio.hdr', function ( texture ) {
@@ -64,63 +109,76 @@ new RGBELoader().load( 'Studio.hdr', function ( texture ) {
 
 
 
-            const renderScene = new RenderPass( scene, camera );
 
-           
-
-                // const bokehPass = new BokehPass( scene, camera, {
-				// 	focus: 0.8,
-				// 	aperture: 0.025,
-				// 	maxblur: 0.01,
-
-				// 	width: window.innerWidth,
-				// 	height: window.innerHeight,
-				// } );
-
-				const composer = new EffectComposer( renderer );
-				composer.addPass( renderScene );
-             
-              //  composer.addPass(bokehPass)
 
 
             const loader = new GLTFLoader();
-            loader.load('room.glb', function(gltf){
+            loader.load('cubes.glb', function(gltf){
                model = gltf.scene;
-               shoes = model.getObjectByName('Shoes');
-
+            //    model.rotation.z = - Math.PI / 2;
+              
+            //   let screen = model.getObjectByName('screen');
+             
+            //   screen.material = videomaterial;
                scene.add(model);
+
+            //   const glassmaterial = new THREE.MeshPhysicalMaterial({
+            //      color: '#3D6475',
+            //      roughness: 0.45,
+            //      metalness: 0.75,
+            //      Clearcoat: 1,
+            //   });
+
+            //   model.getObjectByName('Body').material = glassmaterial;
+            //    anime({
+            //       targets: model.rotation,
+            //        keyframes: [
+            //         {x: Math.PI / 1.2},
+            //         {y: Math.PI },
+                  
+                 
+            //        ],
+            //        loop: true,
+            //         direction: 'alternate',
+            //        duration: 4000,
+            //        easing: 'easeInOutBack'
+            //    })
                
-          anime({
-            targets: shoes.rotation,
-           z: [shoes.rotation.z, shoes.rotation.z + 0.4 ],
-       
-            duration: 1200,
-            loop: true,
-            direction: 'alternate',
-            easing: 'easeInOutExpo',
-       });
+            //    anime({
+            //       targets: model.scale,
+            //        x: ['0', '1'],
+            //        y: ['0', '1'],
+            //        z: ['0', '1'],
+            //       delay:500,
+            //    })
 
-       anime({
-            targets: shoes.position,
-            y: [shoes.position.y, shoes.position.y + 0.8],
-            delay: 310,
-            duration: 900,
-            loop: true,
-            easing: 'easeInOutExpo',
-            direction: 'alternate',
-       })
+            
 
-    
-       anime({
-            targets: shoes.position,
-            z: [shoes.position.z, '2'],
-            delay: 300,
-            duration: 900,
-            loop: true,
-            easing: 'easeInOutExpo',
-            direction: 'alternate',
-       })
-    
+              //  anime({
+              //   targets: model.scale,
+              //   x: [0, 1],
+              //   y: [0, 1],
+              //   z: [0, 1],
+              //   delay: 200,
+              //   easing: 'easeInOutExpo'
+              // });
+
+              // anime({
+              //   targets: model.rotation,
+              //   x: [model.rotation.x, Math.PI / 2.1 ],
+              //   delay: 1000,
+              //   easing: 'easeInOutExpo'
+              // });
+
+              // anime({
+              //   targets: model.position,
+              //   y: [model.position.y, model.position.y + 2],
+              //   delay: 1800,
+              //   easing: 'easeInOutExpo'
+              // });
+
+
+      
             },
             function ( xhr ) {
 
@@ -137,11 +195,11 @@ new RGBELoader().load( 'Studio.hdr', function ( texture ) {
                 const deltatime = elapse - oldtime;
                 oldtime = deltatime;
 
-              
+     
                     
                controls.update();      
           
-			composer.render();
+			renderer.render(scene,camera)
 			};
 
 			animate();
@@ -149,3 +207,4 @@ new RGBELoader().load( 'Studio.hdr', function ( texture ) {
         }
 
         init();
+
